@@ -18,23 +18,23 @@ class QuantizeBase(FakeQuantizeBase):
     def __init__(self, observer=MovingAverageMinMaxObserver, **observer_kwargs):
         super().__init__()
         self.activation_post_process = observer(**observer_kwargs)
-        self.dtype = self.activation_post_process.dtype
+        self.dtype = self.activation_post_process.dtype # 类型
         self.qscheme = self.activation_post_process.qscheme
-        self.quant_min = self.activation_post_process.quant_min
-        self.quant_max = self.activation_post_process.quant_max
+        self.quant_min = self.activation_post_process.quant_min # 最小值
+        self.quant_max = self.activation_post_process.quant_max # 最大值
         assert self.quant_min <= self.quant_max, \
             'quant_min must be less than or equal to quant_max'
         self.pot_scale = self.activation_post_process.pot_scale
         self.ch_axis = self.activation_post_process.ch_axis \
-            if hasattr(self.activation_post_process, 'ch_axis') else -1
+            if hasattr(self.activation_post_process, 'ch_axis') else -1 # chn维度
         assert _is_per_channel(self.qscheme) or \
             _is_per_tensor(self.qscheme), \
             'Only per channel and per tensor quantization are supported in fake quantize' + \
             ' got qscheme: ' + str(self.qscheme)
-        self.is_per_channel = _is_per_channel(self.qscheme)
-        bitrange = torch.tensor(self.quant_max - self.quant_min + 1).double()
-        self.bitwidth = int(torch.log2(bitrange).item())
-        self.is_symmetric_quant = is_symmetric_quant(self.qscheme)
+        self.is_per_channel = _is_per_channel(self.qscheme) # 是否per channel量化
+        bitrange = torch.tensor(self.quant_max - self.quant_min + 1).double() 
+        self.bitwidth = int(torch.log2(bitrange).item()) # 位宽
+        self.is_symmetric_quant = is_symmetric_quant(self.qscheme) # 是否对称量化
 
     @torch.jit.export
     def calculate_qparams(self):
