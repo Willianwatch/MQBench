@@ -24,7 +24,7 @@ class QuantizeBase(FakeQuantizeBase):
         self.quant_max = self.activation_post_process.quant_max # 最大值
         assert self.quant_min <= self.quant_max, \
             'quant_min must be less than or equal to quant_max'
-        self.pot_scale = self.activation_post_process.pot_scale
+        self.pot_scale = self.activation_post_process.pot_scale # indecate wheather scale is power of two.
         self.ch_axis = self.activation_post_process.ch_axis \
             if hasattr(self.activation_post_process, 'ch_axis') else -1 # chn维度
         assert _is_per_channel(self.qscheme) or \

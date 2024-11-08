@@ -12,12 +12,12 @@ class DoReFaFakeQuantize(QuantizeBase):
         self.register_buffer('zero_point', torch.tensor([0], dtype=torch.int))
 
     def forward(self, X):
-        X = torch.tanh(X)
-        X = X.div(X.abs().max() + 1e-5)
+        X = torch.tanh(X) # to (-1, 1)
+        X = X.div(X.abs().max() + 1e-5) # 除以最大值做归一化
 
         if self.observer_enabled[0] == 1:
-            self.activation_post_process(X.detach())
-            _scale, _zero_point = self.activation_post_process.calculate_qparams()
+            self.activation_post_process(X.detach()) # 会计算最大最小值作为self.activation_post_process的属性
+            _scale, _zero_point = self.activation_post_process.calculate_qparams() # 计算scale和zp，怎么算的呢？
             _scale, _zero_point = _scale.to(self.scale.device), _zero_point.to(self.zero_point.device)
             if self.scale.shape != _scale.shape:
                 self.scale.resize_(_scale.shape)
