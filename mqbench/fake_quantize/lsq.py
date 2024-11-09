@@ -35,7 +35,7 @@ class LearnableFakeQuantize(QuantizeBase):
                    self.dtype, self.qscheme, self.ch_axis, self.scale if self.ch_axis == -1 else 'List[%s]' % str(self.scale.shape),
                    self.zero_point if self.ch_axis == -1 else 'List')
 
-    def forward(self, X):
+    def forward(self, X): # 核心部分
         # Learnable fake quantize have to zero_point.float() to make it learnable.
         if self.observer_enabled[0] == 1:
             self.activation_post_process(X.detach())
@@ -55,7 +55,7 @@ class LearnableFakeQuantize(QuantizeBase):
 
         if self.fake_quant_enabled[0] == 1:
             if is_symmetric_quant(self.qscheme):
-                self.zero_point.data.zero_()
+                self.zero_point.data.zero_() # 对称量化，zero point就是0
             else:
                 self.zero_point.data.clamp_(self.quant_min, self.quant_max).float()
 
