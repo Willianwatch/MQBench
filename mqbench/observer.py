@@ -2,7 +2,7 @@ import math
 from typing import Tuple
 
 import torch
-from torch.quantization.observer import _ObserverBase
+from torch.quantization.observer import _ObserverBase # 值得一看
 
 from mqbench.fake_quantize.quantize_base import _version_under_1100 
 from mqbench.utils import sync_tensor, pot_quantization, is_symmetric_quant
